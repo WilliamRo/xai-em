@@ -32,8 +32,9 @@ ms.set('title', True)
 ms.set('color_bar', True)
 ms.set('mini_map', True)
 ms.set('share_roi', True)
-# ms.zoom(0.5)
-ms.sv(-5, 5)
+ms.zoom(0.5)
+ms.sv(-3, 3)
+om.sd(100)
 
 om.show()
 
