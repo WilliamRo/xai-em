@@ -34,6 +34,7 @@ import bd_du as du
 # -----------------------------------------------------------------------------
 th = Hub(as_global=True)
 th.config_dir()
+th.data_dir = os.path.join(ROOT, 'data/Tomo110/tomo')
 
 # -----------------------------------------------------------------------------
 # Device configuration
@@ -42,8 +43,14 @@ th.allow_growth = False
 th.gpu_memory_fraction = 0.50
 
 # -----------------------------------------------------------------------------
+# Data configuration
+# -----------------------------------------------------------------------------
+th.input_shape = [None, None, None, 1]
+
+# -----------------------------------------------------------------------------
 # Set common trainer configs
 # -----------------------------------------------------------------------------
+th.loss_string = 'mse'
 th.early_stop = False
 th.patience = 5
 
@@ -57,7 +64,6 @@ th.export_tensors_upon_validation = True
 
 def activate():
   # Load data
-  # train_set, val_set, test_set = du.load_data()
   data_set = du.load_data()
 
   # Build model
@@ -74,10 +80,8 @@ def activate():
   # Train or evaluate
   if th.train:
     model.train(data_set, trainer_hub=th)
-    model.agent.load()
   else:
-    # Evaluate on test set
-    data_set.test_care_model(model)
+    pass
 
   # End
   model.shutdown()

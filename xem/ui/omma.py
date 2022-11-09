@@ -51,6 +51,40 @@ class Omma(Pictor):
 
   # endregion: Public Methods
 
+  # region: APIs
+
+  @staticmethod
+  def visualize(data_dict: dict, title=True, color_bar=True, mini_map=False,
+                share_roi=False, vmin=None, vmax=None, init_depth=1,
+                vsigma=None, init_zoom=1.0):
+    from pictor.plotters.microscope import Microscope
+    om = Omma('Omma', figure_size=(8, 8))
+
+    # Get objects and labels
+    image_list, label_list = [], []
+    for k, v in data_dict.items():
+      image_list.append(v)
+      label_list.append(k)
+
+    # Set objects and labels
+    om.set_large_image(image_list)
+    om.labels = label_list
+
+    # Set microscope arguments
+    ms = om.add_plotter(Microscope())
+    ms.set('title', title)
+    ms.set('color_bar', color_bar)
+    ms.set('mini_map', mini_map)
+    ms.set('share_roi', share_roi)
+    ms.set('vsigma', vsigma)
+    ms.zoom(init_zoom)
+    ms.sv(vmin, vmax)
+
+    om.sd(init_depth)
+    om.show()
+
+  # endregion: APIs
+
 
 if __name__ == '__main__':
   om = Omma()
