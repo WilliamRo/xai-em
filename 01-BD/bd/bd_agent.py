@@ -27,6 +27,10 @@ class BDAgent(DataAgent):
     for key, config in zip(
         (BDSet.FEATURES, BDSet.TARGETS), th.data_config.split('>')):
       volume_list = [bd_set.data_dict[k] for k in config.split(',')]
+
+      # TODO: currently len(volume_list) is restricted to 1
+      assert len(volume_list) == 1
+
       bd_set.data_dict[key] = np.stack(volume_list, axis=0)
 
     bd_set.name = f'BDSet({th.data_config})'

@@ -15,15 +15,18 @@ def finalize(model):
   from bd_core import th
   assert isinstance(model, mu.Predictor)
 
+  # Add last layer
+  model.add(mu.HyperConv3D(filters=1, kernel_size=1))
+
   # Build model
   model.build(loss=th.loss_string, metric=th.loss_string)
   return model
 
 
-def get_unet():
+def get_unet(arc_string='8-3-4-2-relu-mp'):
   model = get_initial_model()
 
-  mu.UNet(3, arc_string='8-3-4-2-relu-mp').add_to(model)
+  mu.UNet(3, arc_string=arc_string).add_to(model)
 
   return finalize(model)
 

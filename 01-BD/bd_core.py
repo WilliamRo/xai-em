@@ -40,13 +40,19 @@ th.data_dir = os.path.join(ROOT, 'data/Tomo110/tomo')
 # Device configuration
 # -----------------------------------------------------------------------------
 th.allow_growth = False
-th.gpu_memory_fraction = 0.50
+th.gpu_memory_fraction = 0.9
 
 # -----------------------------------------------------------------------------
 # Data configuration
 # -----------------------------------------------------------------------------
 th.input_shape = [None, None, None, 1]
 
+th.train_volume_size = 64
+
+th.val_volume_size = 320
+th.val_volume_depth = 160
+th.val_volume_anchor = '20,350,272'
+th.val_snapshot_d_index = 90
 # -----------------------------------------------------------------------------
 # Set common trainer configs
 # -----------------------------------------------------------------------------
@@ -54,8 +60,8 @@ th.loss_string = 'mse'
 th.early_stop = False
 th.patience = 5
 
-th.print_cycle = 5
-th.updates_per_round = 75
+th.print_cycle = 2
+th.updates_per_round = 50
 th.validation_per_round = 1
 
 th.export_tensors_upon_validation = True
@@ -79,9 +85,10 @@ def activate():
 
   # Train or evaluate
   if th.train:
-    model.train(data_set, trainer_hub=th)
+    model.train(data_set, validation_set=data_set.data_for_validation,
+                trainer_hub=th)
   else:
-    pass
+    data_set.evaluate_denoiser(model)
 
   # End
   model.shutdown()
