@@ -19,10 +19,18 @@ class BDConfig(SmartTrainerHub):
     False, 'Whether to randomly switch feature and target during training',
     is_key=None)
 
+  link_indices_str = Flag.string('a', 'U-Net link indices', is_key=None)
+
 
   @property
   def snapshot_d_indices_list(self):
     return [int(i) for i in self.snapshot_d_indices.split(',')]
+
+  @property
+  def link_indices(self):
+    if self.link_indices_str in ('a', 'all', '-', ''):
+      return self.link_indices_str
+    return [int(s) for s in self.link_indices_str.split(',')]
 
 
 

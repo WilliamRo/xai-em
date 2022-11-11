@@ -23,10 +23,10 @@ def finalize(model):
   return model
 
 
-def get_unet(arc_string='8-3-4-2-relu-mp'):
+def get_unet(arc_string='8-3-4-2-relu-mp', **kwargs):
   model = get_initial_model()
 
-  mu.UNet(3, arc_string=arc_string).add_to(model)
+  mu.UNet(3, arc_string=arc_string, **kwargs).add_to(model)
 
   return finalize(model)
 

@@ -16,7 +16,7 @@ id = 1
 def model():
   th = core.th
 
-  return m.get_unet(th.archi_string)
+  return m.get_unet(th.archi_string, link_indices=th.link_indices)
 
 
 def main(_):
@@ -27,7 +27,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 0. date set setup
   # ---------------------------------------------------------------------------
-  th.data_config = ['even>odd', 'even>even'][0]
+  th.data_config = ['even>odd', 'even>even'][1]
   th.random_switch = False
   th.train_volume_size = 64
 
@@ -44,6 +44,8 @@ def main(_):
   # ---------------------------------------------------------------------------
   th.model = model
 
+  th.link_indices_str = 'a'
+
   th.kernel_size = 3
   th.activation = 'relu'
 
@@ -52,22 +54,24 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 3. trainer setup
   # ---------------------------------------------------------------------------
-  th.epoch = 3
+  th.epoch = 20
   th.early_stop = False
-  th.probe_cycle = th.updates_per_round // 3
+  th.probe_cycle = th.updates_per_round // 2
 
   th.batch_size = 32
 
   th.optimizer = 'adam'
   th.learning_rate = 0.0003
 
-  th.train = False
+  th.train = True
   th.overwrite = True
   # ---------------------------------------------------------------------------
   # 4. other stuff and activate
   # ---------------------------------------------------------------------------
-  th.mark = '{}({})'.format(model_name, th.archi_string)
-  # th.mark += th.data_config.replace('>', '-')
+  th.mark = '{}({})'.format(
+    model_name, th.archi_string + '-' + th.link_indices_str)
+  th.mark += th.data_config.replace('>', '-')
+  if th.random_switch: th.mark += '-rs'
   th.gather_summ_name = th.prefix + summ_name + '.sum'
   core.activate()
 
