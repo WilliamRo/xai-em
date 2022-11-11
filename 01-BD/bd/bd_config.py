@@ -12,12 +12,17 @@ class BDConfig(SmartTrainerHub):
   val_volume_anchor = Flag.string(
     '0,0,0', 'Anchor point of validation volume. Use `;` to split '
              'multi-volumes', is_key=None)
-  val_snapshot_d_index = Flag.string(
-    '100', 'Snapshot depth, use `;` to split multiple values')
+  snapshot_d_indices = Flag.string(
+    '80', 'Snapshot depth, use `,` to split multiple values')
 
   random_switch = Flag.boolean(
     False, 'Whether to randomly switch feature and target during training',
     is_key=None)
+
+
+  @property
+  def snapshot_d_indices_list(self):
+    return [int(i) for i in self.snapshot_d_indices.split(',')]
 
 
 

@@ -143,7 +143,31 @@ class BDSet(DataSet):
                  'result': result[0]}
 
     # Visualize data using Omma
-    Omma.visualize(data_dict, init_depth=th.val_snapshot_d_index, vsigma=3)
+    Omma.visualize(data_dict, init_depth=th.snapshot_d_indices_list[0],
+                   vsigma=3)
+
+  def snapshot(self, model):
+    from bd_core import th
+    from tframe import Predictor
+    import os
+    import matplotlib.pyplot as plt
+
+    assert isinstance(model, Predictor)
+
+    val_set = self.data_for_validation
+
+    # (1) Get denoised image (shape=[1, D, H, W, 1])
+    denoised_image = model.predict(val_set.as_parent_data_set)
+
+    # (2) Get metrics
+    val_dict = model.validate_model(val_set)
+
+    # (3) Save image
+    for d in th.snapshot_d_indices_list:
+      metric_str = '-'.join([f'{k}{v:.2f}' for k, v in val_dict.items()])
+      fn = f'Depth{d}-Iter{model.counter}-{metric_str}.png'
+      plt.imsave(os.path.join(model.agent.ckpt_dir, fn),
+                 denoised_image[0, d, ..., 0])
 
   # endregion: Validation and snapshot
 

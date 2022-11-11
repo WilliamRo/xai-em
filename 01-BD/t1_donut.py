@@ -11,12 +11,18 @@ from tframe.utils.organizer.task_tools import update_job_dir
 # -----------------------------------------------------------------------------
 # Define model here
 # -----------------------------------------------------------------------------
-model_name = 'unet'
-id = 1
+model_name = 'donut'
+id = 2
 def model():
-  th = core.th
+  from bd.layers.donut import Donut3D
 
-  return m.get_unet(th.archi_string)
+  th = core.th
+  model = m.get_initial_model()
+
+  n_filter = int(th.archi_string.split('-')[0])
+  model.add(Donut3D(n_filter, kernel_size=th.kernel_size))
+  m.mu.UNet(3, arc_string=th.archi_string).add_to(model)
+  return m.finalize(model)
 
 
 def main(_):
@@ -27,7 +33,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 0. date set setup
   # ---------------------------------------------------------------------------
-  th.data_config = ['even>odd', 'even>even'][0]
+  th.data_config = 'even>even'
   th.random_switch = False
   th.train_volume_size = 64
 
@@ -52,7 +58,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 3. trainer setup
   # ---------------------------------------------------------------------------
-  th.epoch = 3
+  th.epoch = 10
   th.early_stop = False
   th.probe_cycle = th.updates_per_round // 3
 
@@ -61,13 +67,13 @@ def main(_):
   th.optimizer = 'adam'
   th.learning_rate = 0.0003
 
-  th.train = False
-  th.overwrite = True
+  th.train = True
+  th.overwrite = False
   # ---------------------------------------------------------------------------
   # 4. other stuff and activate
   # ---------------------------------------------------------------------------
   th.mark = '{}({})'.format(model_name, th.archi_string)
-  # th.mark += th.data_config.replace('>', '-')
+  th.mark += th.data_config.replace('>', '-')
   th.gather_summ_name = th.prefix + summ_name + '.sum'
   core.activate()
 

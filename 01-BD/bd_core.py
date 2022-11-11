@@ -27,6 +27,7 @@ from tframe import Predictor
 from bd.bd_config import BDConfig as Hub
 
 import bd_du as du
+import bd_tu as tu
 
 
 # -----------------------------------------------------------------------------
@@ -52,7 +53,7 @@ th.train_volume_size = 64
 th.val_volume_size = 320
 th.val_volume_depth = 160
 th.val_volume_anchor = '20,350,272'
-th.val_snapshot_d_index = 90
+th.snapshot_d_indices = '80'
 # -----------------------------------------------------------------------------
 # Set common trainer configs
 # -----------------------------------------------------------------------------
@@ -83,10 +84,12 @@ def activate():
                    path=model.agent.ckpt_dir, mark='model')
     return
 
-  # Train or evaluate
+  # Train or evaluate. Note that, although both validation and evaluation use
+  #  data_set.data_for_validation, evaluate_denoiser is called by data_set
+  #  itself.
   if th.train:
     model.train(data_set, validation_set=data_set.data_for_validation,
-                trainer_hub=th)
+                probe=tu.probe, trainer_hub=th)
   else:
     data_set.evaluate_denoiser(model)
 

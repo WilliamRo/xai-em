@@ -1,7 +1,6 @@
 from tframe import tf
 from tframe.layers.hyper.conv import ConvBase, Conv2D, Conv3D
 
-import typing as tp
 import numpy as np
 
 
@@ -21,12 +20,11 @@ class DonutBase(ConvBase):
 
     # Put a hole into filter
     mask = np.ones(shape=filter_shape)
-    if self.Configs.kernel_dim == 1:
-      mask[filter_shape[0] // 2] = 0
-    elif self.Configs.kernel_dim == 2:
-      mask[filter_shape[0] // 2, filter_shape[1] // 2] = 0
-    else:
-      mask[filter_shape[0] // 2, filter_shape[1] // 2, filter_shape[2] // 2] = 0
+    sub_shape = filter_shape[:-2]
+    # Make sure all dims in sub_shape are odd integers
+    for d in sub_shape: isinstance(d, int) and d % 2 == 1
+    index = tuple([d // 2 for d in sub_shape])
+    mask[index] = 0
 
     return filter * mask
 
