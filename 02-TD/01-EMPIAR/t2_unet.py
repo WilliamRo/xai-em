@@ -1,5 +1,5 @@
-import bd_core as core
-import bd_mu as m
+import td_core as core
+import td_mu as m
 
 from tframe import console
 from tframe import tf
@@ -20,16 +20,15 @@ def model():
 
 
 def main(_):
-  console.start('{} on cryo-EM blind denoise task'.format(model_name.upper()))
+  console.start('{} on 2-D EMPIAR denoise task'.format(model_name.upper()))
 
   th = core.th
   th.rehearse = False
   # ---------------------------------------------------------------------------
   # 0. date set setup
   # ---------------------------------------------------------------------------
-  th.data_config = ['even>odd', 'even>even'][1]
-  th.random_switch = False
-  th.train_volume_size = 64
+  th.data_config = 'empiar'
+  th.win_size = 64
 
   # ---------------------------------------------------------------------------
   # 1. folder/file names and device

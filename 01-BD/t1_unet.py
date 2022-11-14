@@ -44,7 +44,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   th.model = model
 
-  th.link_indices_str = 'a'
+  th.link_indices_str = '1,2'
 
   th.kernel_size = 3
   th.activation = 'relu'
@@ -65,6 +65,12 @@ def main(_):
 
   th.train = True
   th.overwrite = True
+
+  gif_mode = 1
+  if gif_mode:
+    th.epoch = 4
+    th.probe_cycle = 2
+    th.print_cycle = 2
   # ---------------------------------------------------------------------------
   # 4. other stuff and activate
   # ---------------------------------------------------------------------------

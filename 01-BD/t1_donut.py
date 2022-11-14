@@ -20,7 +20,8 @@ def model():
   model = m.get_initial_model()
 
   n_filter = int(th.archi_string.split('-')[0])
-  model.add(Donut3D(n_filter, kernel_size=th.kernel_size))
+  model.add(Donut3D(n_filter, kernel_size=th.kernel_size,
+                    pierce=th.int_para_1, verbose=True))
   m.mu.UNet(3, arc_string=th.archi_string).add_to(model)
   return m.finalize(model)
 
@@ -50,6 +51,10 @@ def main(_):
   # ---------------------------------------------------------------------------
   th.model = model
 
+  # Pierce dimension (comment the line below if not required)
+  th.int_para_1 = 0
+  assert th.int_para_1 in (0, None)
+
   th.kernel_size = 3
   th.activation = 'relu'
 
@@ -69,11 +74,18 @@ def main(_):
 
   th.train = True
   th.overwrite = False
+
+  gif_mode = 1
+  if gif_mode:
+    th.epoch = 2
+    th.probe_cycle = 1
+    th.print_cycle = 1
   # ---------------------------------------------------------------------------
   # 4. other stuff and activate
   # ---------------------------------------------------------------------------
   th.mark = '{}({})'.format(model_name, th.archi_string)
   th.mark += th.data_config.replace('>', '-')
+  if th.int_para_1 is not None: th.mark += f'-pierce{th.int_para_1}'
   th.gather_summ_name = th.prefix + summ_name + '.sum'
   core.activate()
 

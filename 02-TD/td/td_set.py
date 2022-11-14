@@ -7,6 +7,21 @@ from roma import console
 
 class TDSet(DataSet):
 
+  # region: Data IO
+
+  def configure(self):
+    pass
+
+  @classmethod
+  def load_as_numpy_array(cls, data_dir, **kwargs):
+    raise NotImplementedError
+
+  @classmethod
+  def load_as_tframe_data(cls, data_dir, **kwargs):
+    raise NotImplementedError
+
+  # endregion: Data IO
+
   # region: Report and visualization
 
   def report(self):
@@ -68,31 +83,5 @@ class TDSet(DataSet):
 
 
 if __name__ == '__main__':
-  # ++ Blue box for data -> model
-  from td_core import th
-  from bd.bd_agent import BDAgent
-  from tframe import console
+  pass
 
-  th.data_config = 'even>odd'
-
-  # Load data
-  ds: BDSet = BDAgent.load()
-
-  # (1) during training
-  console.section('Training')
-
-  th.updates_per_round = 5
-  th.train_volume_size = 64
-
-  for batch in ds.gen_batches(batch_size=32, is_training=True): batch.report()
-
-  # (2) visualize data for validation
-  console.section('Validation')
-
-  th.val_volume_depth = 160
-  th.val_volume_size = 320
-  th.val_volume_anchor = '20,350,272'
-
-  val_set = ds.data_for_validation
-  val_set.report()
-  val_set.visualize(show_raw_data=False)

@@ -1,3 +1,4 @@
+from tframe import console
 from tframe import tf
 from tframe.layers.hyper.conv import ConvBase, Conv2D, Conv3D
 
@@ -23,8 +24,19 @@ class DonutBase(ConvBase):
     sub_shape = filter_shape[:-2]
     # Make sure all dims in sub_shape are odd integers
     for d in sub_shape: isinstance(d, int) and d % 2 == 1
-    index = tuple([d // 2 for d in sub_shape])
-    mask[index] = 0
+
+    # Pierce if required
+    p_index = self._nb_kwargs.get('pierce', None)
+    if isinstance(p_index, int) and p_index >= 0:
+      # Currently, this only works for piercing axis=0 in 3-D kernel
+      assert p_index == 0 and self.Configs.kernel_dim == 3
+      mask[:, sub_shape[1] // 2, sub_shape[2] // 2] = 0
+
+      if self._nb_kwargs.get('verbose', False):
+        console.show_info(f'Donut pierced (index = {p_index})')
+    else:
+      index = tuple([d // 2 for d in sub_shape])
+      mask[index] = 0
 
     return filter * mask
 

@@ -24,7 +24,7 @@ for _ in range(DIR_DEPTH):
 from tframe import console
 from tframe import Predictor
 
-from tframe.trainers.smartrainer import SmartTrainerHub as Hub
+from td.td_config import TDConfig as Hub
 
 import td_tu as du
 import td_tu as tu
@@ -35,7 +35,7 @@ import td_tu as tu
 # -----------------------------------------------------------------------------
 th = Hub(as_global=True)
 th.config_dir()
-th.data_dir = os.path.join(ROOT, 'data/Tomo110/tomo')
+th.data_dir = os.path.join(ROOT, 'data')
 
 # -----------------------------------------------------------------------------
 # Device configuration
@@ -46,14 +46,9 @@ th.gpu_memory_fraction = 0.9
 # -----------------------------------------------------------------------------
 # Data configuration
 # -----------------------------------------------------------------------------
-th.input_shape = [None, None, None, 1]
+th.input_shape = [None, None, 1]
 
 th.train_volume_size = 64
-
-th.val_volume_size = 320
-th.val_volume_depth = 160
-th.val_volume_anchor = '20,350,272'
-th.snapshot_d_indices = '80'
 # -----------------------------------------------------------------------------
 # Set common trainer configs
 # -----------------------------------------------------------------------------

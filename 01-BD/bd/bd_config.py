@@ -1,9 +1,9 @@
-from tframe.trainers import SmartTrainerHub
+from xem.base_classes.xem_config import XEMConfig
 from tframe.configs.config_base import Flag
 
 
 
-class BDConfig(SmartTrainerHub):
+class BDConfig(XEMConfig):
 
   train_volume_size = Flag.integer(64, 'Volume size for training', is_key=None)
 
@@ -18,8 +18,6 @@ class BDConfig(SmartTrainerHub):
   random_switch = Flag.boolean(
     False, 'Whether to randomly switch feature and target during training',
     is_key=None)
-
-  link_indices_str = Flag.string('a', 'U-Net link indices', is_key=None)
 
 
   @property
