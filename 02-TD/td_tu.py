@@ -4,17 +4,17 @@ from tframe import console
 
 def probe(trainer):
   from tframe.trainers.trainer import Trainer
-  from bd.bd_config import BDConfig
-  from bd.bd_set import BDSet
+  from td.td_config import TDConfig
+  from td.td_set import TDSet
 
   # Sanity check
   th = trainer.th
-  assert isinstance(trainer, Trainer) and isinstance(th, BDConfig)
+  assert isinstance(trainer, Trainer) and isinstance(th, TDConfig)
 
   # Get indices from th
-  train_set: BDSet = trainer.training_set
+  val_set: TDSet = trainer.validation_set
 
   # Take snapshot
-  train_set.snapshot(trainer.model)
+  val_set.snapshot(trainer.model)
 
   return 'Snapshot saved to checkpoint folder'

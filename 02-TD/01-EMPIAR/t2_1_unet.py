@@ -28,7 +28,7 @@ def main(_):
   # 0. date set setup
   # ---------------------------------------------------------------------------
   th.data_config = 'empiar'
-  th.win_size = 64
+  th.win_size = 128
 
   # ---------------------------------------------------------------------------
   # 1. folder/file names and device
@@ -55,7 +55,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   th.epoch = 20
   th.early_stop = False
-  th.probe_cycle = th.updates_per_round // 2
+  th.probe_cycle = th.updates_per_round // 1
 
   th.batch_size = 32
 
@@ -64,15 +64,21 @@ def main(_):
 
   th.train = True
   th.overwrite = True
+
+  gif_mode = 0
+  if gif_mode:
+    th.epoch = 2
+    th.probe_cycle = 1
+    th.print_cycle = 1
   # ---------------------------------------------------------------------------
   # 4. other stuff and activate
   # ---------------------------------------------------------------------------
   th.mark = '{}({})'.format(
     model_name, th.archi_string + '-' + th.link_indices_str)
-  th.mark += th.data_config.replace('>', '-')
-  if th.random_switch: th.mark += '-rs'
+  th.mark += th.data_config
   th.gather_summ_name = th.prefix + summ_name + '.sum'
   core.activate()
+
 
 
 if __name__ == '__main__':

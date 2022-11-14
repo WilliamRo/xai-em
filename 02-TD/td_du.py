@@ -1,16 +1,21 @@
-from bd.bd_agent import BDAgent
-from bd.bd_set import BDSet
+from typing import Tuple
+from td.td_set import TDSet, DataSet
+from td.td_agent import TDAgent
 
 
 
-load_data = BDAgent.load
+def load_data() -> Tuple[TDSet, TDSet]:
+  train_set, val_set = TDAgent.load()
+
+  train_set.report()
+  val_set.report()
+  return train_set, val_set
 
 
 
 if __name__ == '__main__':
-  from bd_core import th
+  from td_core import th
 
-  th.data_config = 'even>odd'
+  th.data_config = 'empiar'
 
-  ds: BDSet = load_data()
-  ds.report()
+  train_set, val_set = load_data()

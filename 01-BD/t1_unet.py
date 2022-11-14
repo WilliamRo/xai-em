@@ -82,6 +82,7 @@ def main(_):
   core.activate()
 
 
+
 if __name__ == '__main__':
   console.suppress_logging()
   tf.app.run()

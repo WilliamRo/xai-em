@@ -52,15 +52,20 @@ class TDSet(DataSet):
   # region: Validation and snapshot
 
   def evaluate_denoiser(self, model):
-    from td_core import th
+    from xem.ui.omma import Omma
     from tframe import Predictor
 
     assert isinstance(model, Predictor)
 
-    pass
+    result = model.predict(self)
+    data_dict = {'feature': self.features[0], 'target': self.targets[0],
+                 'result': result[0]}
+
+    # Visualize data using Omma
+    Omma.visualize(data_dict, vsigma=1)
+
 
   def snapshot(self, model):
-    from td_core import th
     from tframe import Predictor
     import os
     import matplotlib.pyplot as plt
@@ -68,7 +73,7 @@ class TDSet(DataSet):
     assert isinstance(model, Predictor)
 
     # (1) Get denoised image (shape=[1, D, H, W, 1])
-    denoised_image = model.predict(self)
+    denoised_images = model.predict(self)
 
     # (2) Get metrics
     val_dict = model.validate_model(self)
@@ -76,7 +81,8 @@ class TDSet(DataSet):
     # (3) Save image
     metric_str = '-'.join([f'{k}{v:.2f}' for k, v in val_dict.items()])
     fn = f'Iter{model.counter}-{metric_str}.png'
-    plt.imsave(os.path.join(model.agent.ckpt_dir, fn), denoised_image[0])
+    plt.imsave(os.path.join(model.agent.ckpt_dir, fn),
+               denoised_images[0, ..., 0])
 
   # endregion: Validation and snapshot
 

@@ -1,10 +1,6 @@
 from td.td_set import TDSet
-from collections import OrderedDict
 from tframe.data.base_classes import DataAgent
 from roma import console
-
-import os
-import numpy as np
 
 
 
@@ -16,8 +12,6 @@ class TDAgent(DataAgent):
 
     data_set = cls.load_as_tframe_data(th.data_dir, th.data_name,
                                        **th.data_kwargs)
-    data_set.configure()
-    data_set.report()
 
     return data_set.configure()
 

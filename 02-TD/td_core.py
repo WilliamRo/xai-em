@@ -26,7 +26,7 @@ from tframe import Predictor
 
 from td.td_config import TDConfig as Hub
 
-import td_tu as du
+import td_du as du
 import td_tu as tu
 
 
@@ -48,7 +48,6 @@ th.gpu_memory_fraction = 0.9
 # -----------------------------------------------------------------------------
 th.input_shape = [None, None, 1]
 
-th.train_volume_size = 64
 # -----------------------------------------------------------------------------
 # Set common trainer configs
 # -----------------------------------------------------------------------------
@@ -65,20 +64,20 @@ th.export_tensors_upon_validation = True
 
 
 def activate():
-  # Load data
-  data_set = du.load_data()
-
   # Build model
   assert callable(th.model)
   model = th.model()
   assert isinstance(model, Predictor)
 
+  # Load data
+  train_set, val_set = du.load_data()
+
   # Train or evaluate
   if th.train:
-    model.train(data_set, validation_set=data_set.data_for_validation,
-                probe=tu.probe, trainer_hub=th)
+    model.train(train_set, validation_set=val_set, probe=tu.probe,
+                trainer_hub=th)
   else:
-    data_set.evaluate_denoiser(model)
+    val_set.evaluate_denoiser(model)
 
   # End
   model.shutdown()

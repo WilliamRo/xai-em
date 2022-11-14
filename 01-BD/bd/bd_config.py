@@ -24,12 +24,6 @@ class BDConfig(XEMConfig):
   def snapshot_d_indices_list(self):
     return [int(i) for i in self.snapshot_d_indices.split(',')]
 
-  @property
-  def link_indices(self):
-    if self.link_indices_str in ('a', 'all', '-', ''):
-      return self.link_indices_str
-    return [int(s) for s in self.link_indices_str.split(',')]
-
 
 
 # New hub class inherited from SmartTrainerHub must be registered

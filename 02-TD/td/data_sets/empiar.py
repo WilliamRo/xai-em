@@ -14,13 +14,16 @@ class EMPIARSet(TDSet):
   @TDSet.property()
   def validation_set(self):
     A, L = 1000, 2560
-    return EMPIARSet(self.features[:, A:A+L, A:A+L], name='EMPIAR-ValSet')
+    x = self.features[:, A:A+L, A:A+L]
+    return EMPIARSet(x, x, name='EMPIAR-ValSet')
 
   # endregion: Properties
 
   # region: Interfaces
 
   def configure(self):
+    mu, sigma = np.mean(self.features), np.std(self.features)
+    self.features = (self.features - mu) / sigma
 
     return self, self.validation_set
 
@@ -51,7 +54,10 @@ class EMPIARSet(TDSet):
   # region: Data feeding
 
   def gen_batches(self, batch_size, shuffle=False, is_training=False):
-    assert is_training
+    if not is_training:
+      yield self.validation_set
+      return
+
     from td_core import th
 
     round_len = self.get_round_length(batch_size, training=is_training)
