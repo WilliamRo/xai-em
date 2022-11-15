@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from roma import console
 from roma import finder
 from td.td_set import TDSet
@@ -14,40 +15,50 @@ class EMPIARSet(TDSet):
   @TDSet.property()
   def validation_set(self):
     A, L = 1000, 2560
-    x = self.features[:, A:A+L, A:A+L]
-    return EMPIARSet(x, x, name='EMPIAR-ValSet')
+    x, y = self.features[:, A:A+L, A:A+L], self.targets[:, A:A+L, A:A+L]
+    return EMPIARSet(x, y, name='EMPIAR-ValSet')
 
   # endregion: Properties
 
   # region: Interfaces
 
   def configure(self):
-    mu, sigma = np.mean(self.features), np.std(self.features)
-    self.features = (self.features - mu) / sigma
+    from td_core import th
+
+    for data_key, cfg_key in zip(
+        ['features', 'targets'], th.data_args[0].split('2')):
+      assert cfg_key in ('even', 'odd', 'all')
+      self.data_dict[data_key] = self.data_dict[cfg_key]
 
     return self, self.validation_set
 
   @classmethod
   def load_as_tframe_data(cls, data_root, **kwargs):
-    large_image = cls.load_as_numpy_array(data_root)
+    data_dict = cls.load_as_numpy_array(data_root)
 
-    data_set = EMPIARSet(features=large_image, name='EMPIAR-1-raw')
+    data_set = EMPIARSet(data_dict=data_dict, name='EMPIAR-1')
 
     return data_set
 
   @classmethod
-  def load_as_numpy_array(cls, data_root, **kwargs):
-    """Returns only 1 large image"""
-    from topaz.utils.data.loader import load_image
+  def load_as_numpy_array(cls, data_root, **kwargs) -> OrderedDict:
+    data_dir = os.path.join(data_root, r'EMPIAR-10025/npy')
+    console.show_status(f'Loading raw data from `{data_dir}` ...')
 
-    data_dir = os.path.join(data_root, r'EMPIAR-10025\rawdata\micrographs')
+    data_dict = OrderedDict()
 
-    file_list = finder.walk(data_dir, pattern='*.mrc')
-    file_path = file_list[0]
+    for key in ('even', 'odd', 'all'):
+      file_path = os.path.join(data_dir, f'{key}.npy')
+      if not os.path.exists(file_path): raise FileExistsError(
+        f'!! `{file_path}` does not exist.')
+      x = np.load(file_path)
 
-    first_image = np.array(load_image(file_path), copy=False).astype(np.float32)
+      # Normalize data
+      x = (x - np.mean(x)) / np.std(x)
 
-    return first_image[np.newaxis, ..., np.newaxis]
+      data_dict[key] = x[np.newaxis, ..., np.newaxis]
+
+    return data_dict
 
   # endregion: Interfaces
 
@@ -71,9 +82,12 @@ class EMPIARSet(TDSet):
         a1, a2 = [
           np.random.randint(0, L - size + 1) for L in self.features.shape[1:3]]
         x = self.features[0, a1:a1+size, a2:a2+size]
+        y = self.targets[0, a1:a1+size, a2:a2+size]
+        # Switch x, y if necessary
+        if th.random_switch and np.random.choice([True, False]): x, y = y, x
 
         features.append(x)
-        targets.append(x)
+        targets.append(y)
 
       yield EMPIARSet(np.stack(features, axis=0),
                       np.stack(targets, axis=0), name=f'TrainSet[{i+1}]')
@@ -88,8 +102,8 @@ class EMPIARSet(TDSet):
   def visualize(self):
     from xem.ui.omma import Omma
 
-    Omma.visualize({'micrographs': self.features[0]},
-                   title=False, vsigma=1, mini_map=True, init_zoom=0.5)
+    Omma.visualize({k: v for k, v in self.data_dict.items()},
+                   title=True, vsigma=1, mini_map=True, share_roi=True)
 
   # endregion: Report and visualization
 

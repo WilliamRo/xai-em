@@ -11,12 +11,21 @@ from tframe.utils.organizer.task_tools import update_job_dir
 # -----------------------------------------------------------------------------
 # Define model here
 # -----------------------------------------------------------------------------
-model_name = 'unet'
-id = 1
+model_name = 'prism'
+id = 3
 def model():
   th = core.th
+  model = m.get_initial_model()
 
-  return m.get_unet(th.archi_string, link_indices=th.link_indices)
+  model.add(m.mu.HyperConv2D(filters=th.filters, kernel_size=th.kernel_size))
+  model.add(m.mu.Activation('lrelu'))
+  model.add(m.mu.HyperConv2D(filters=th.filters, kernel_size=th.kernel_size))
+  model.add(m.mu.Activation('lrelu'))
+  model.add(m.mu.HyperConv2D(filters=1, kernel_size=th.kernel_size))
+
+  # Build model
+  model.build(loss=th.loss_string, metric=th.loss_string)
+  return model
 
 
 def main(_):
@@ -45,26 +54,23 @@ def main(_):
 
   th.link_indices_str = 'a'
 
-  th.kernel_size = 5
-  th.filters = 8
-  th.activation = 'relu'
-
-  # {filters}-{kernel_size}-{height}-{thickness}-[link_indices]-[mp]-[bn]
-  th.archi_string = f'{th.filters}-{th.kernel_size}-3-2-{th.activation}-mp'
+  th.filters = 48
+  th.kernel_size = 11
+  th.activation = 'lrelu'
   # ---------------------------------------------------------------------------
   # 3. trainer setup
   # ---------------------------------------------------------------------------
-  th.epoch = 10
+  th.epoch = 6
   th.early_stop = False
-  th.probe_cycle = th.updates_per_round // 2
+  th.probe_cycle = th.updates_per_round // 5
 
   th.batch_size = 4
 
   th.optimizer = 'adam'
   th.learning_rate = 0.0003
 
-  th.train = 0
-  th.overwrite = 1
+  th.train = 1
+  th.overwrite = True
 
   gif_mode = 0
   if gif_mode:
@@ -74,10 +80,10 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 4. other stuff and activate
   # ---------------------------------------------------------------------------
-  th.mark = '{}({})'.format(
-    model_name, th.archi_string + '-' + th.link_indices_str)
-  th.mark += th.data_config
+  arc_string = f'f{th.filters}ks{th.kernel_size}'
+  th.mark = '{}({})'.format(model_name, arc_string)
   th.mark += f'-ws{th.win_size}'
+  th.mark += th.data_config
   th.gather_summ_name = th.prefix + summ_name + '.sum'
   core.activate()
 

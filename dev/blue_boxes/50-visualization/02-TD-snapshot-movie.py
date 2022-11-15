@@ -4,11 +4,12 @@ from pictor.plotters.retina import Retina
 
 import imageio
 import os
+import numpy as np
 
 
 
 # Read images
-folder_path = r'E:\xai-em\02-TD\01-EMPIAR\01_unet\checkpoints\1114_unet(8-3-3-2-relu-mp-a)empiar'
+folder_path = r'E:\xem\02-TD\01-EMPIAR\01_unet\checkpoints\1115_unet(8-3-3-2-relu-mp-a)empiar even2odd-ws64'
 
 get_iter = lambda fp: int(fp.split('-')[0][4:])
 
@@ -17,12 +18,13 @@ file_names = finder.walk(
 file_names.sort(key=get_iter)
 
 images = [imageio.imread(os.path.join(folder_path, fn)) for fn in file_names]
+# images = [(im - np.mean(im)) / np.std(im)  for im in images]
 
 
 # Visualize image stack using pictor
 p = Pictor(figure_size=(6, 6))
 r = p.add_plotter(Retina())
-r.set('color_bar', True)
+r.set('color_bar', False)
 r.set('title', True)
 p.objects = images
 p.labels = file_names

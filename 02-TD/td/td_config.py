@@ -14,6 +14,10 @@ class TDConfig(XEMConfig):
     return Arguments.parse(self.data_config).func_name
 
   @property
+  def data_args(self):
+    return Arguments.parse(self.data_config).arg_list
+
+  @property
   def data_kwargs(self) -> dict:
     return Arguments.parse(self.data_config).arg_dict
 

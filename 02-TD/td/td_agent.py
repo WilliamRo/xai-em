@@ -31,7 +31,13 @@ if __name__ == '__main__':
   # ++ Blue box for data
   from td_core import th
 
-  th.data_config = 'empiar'
+  th.data_config = 'empiar even2even'
 
   train_set, val_set = TDAgent.load()
+
+  assert isinstance(train_set, TDSet)
+  th.win_size = 64
+  batch = list(train_set.gen_batches(6, is_training=True))[0]
+
+  # batch.visualize()
   val_set.visualize()

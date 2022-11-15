@@ -15,10 +15,6 @@ class BDConfig(XEMConfig):
   snapshot_d_indices = Flag.string(
     '80', 'Snapshot depth, use `,` to split multiple values')
 
-  random_switch = Flag.boolean(
-    False, 'Whether to randomly switch feature and target during training',
-    is_key=None)
-
 
   @property
   def snapshot_d_indices_list(self):

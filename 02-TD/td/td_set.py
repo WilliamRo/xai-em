@@ -57,12 +57,17 @@ class TDSet(DataSet):
 
     assert isinstance(model, Predictor)
 
+    # This line is to protect predict method from going to customized
+    # .. _gen_batches method
+    self.__class__ = TDSet
+
     result = model.predict(self)
+
     data_dict = {'feature': self.features[0], 'target': self.targets[0],
-                 'result': result[0]}
+                 f'Iter{model.counter}': result[0]}
 
     # Visualize data using Omma
-    Omma.visualize(data_dict, vsigma=1)
+    Omma.visualize(data_dict)
 
 
   def snapshot(self, model):
