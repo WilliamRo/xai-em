@@ -27,7 +27,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 0. date set setup
   # ---------------------------------------------------------------------------
-  th.data_config = ['empiar even2odd', 'empiar even2even'][0]
+  th.data_config = ['empiar even2odd', 'empiar even2even'][1]
   th.win_size = 800
 
   # ---------------------------------------------------------------------------
@@ -43,7 +43,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   th.model = model
 
-  th.link_indices_str = 'a'
+  th.link_indices_str = '-'
 
   th.kernel_size = 5
   th.filters = 8
@@ -54,7 +54,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 3. trainer setup
   # ---------------------------------------------------------------------------
-  th.epoch = 10
+  th.epoch = 20
   th.early_stop = False
   th.probe_cycle = th.updates_per_round // 2
 
@@ -64,7 +64,7 @@ def main(_):
   th.learning_rate = 0.0003
 
   th.train = 0
-  th.overwrite = 1
+  th.overwrite = 0
 
   gif_mode = 0
   if gif_mode:
@@ -76,7 +76,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   th.mark = '{}({})'.format(
     model_name, th.archi_string + '-' + th.link_indices_str)
-  th.mark += th.data_config
+  th.mark += th.data_config.split(' ')[1]
   th.mark += f'-ws{th.win_size}'
   th.gather_summ_name = th.prefix + summ_name + '.sum'
   core.activate()

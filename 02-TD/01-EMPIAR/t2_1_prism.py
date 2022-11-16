@@ -60,9 +60,9 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 3. trainer setup
   # ---------------------------------------------------------------------------
-  th.epoch = 6
+  th.epoch = 20
   th.early_stop = False
-  th.probe_cycle = th.updates_per_round // 5
+  th.probe_cycle = th.updates_per_round // 2
 
   th.batch_size = 4
 
