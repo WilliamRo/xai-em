@@ -179,7 +179,7 @@ if __name__ == '__main__':
   from bd.bd_agent import BDAgent
   from tframe import console
 
-  th.data_config = 'even>odd'
+  th.data_config = 'even2odd'
 
   # Load data
   ds: BDSet = BDAgent.load()

@@ -40,4 +40,4 @@ if __name__ == '__main__':
   batch = list(train_set.gen_batches(6, is_training=True))[0]
 
   # batch.visualize()
-  val_set.visualize()
+  val_set.visualize(hist_margin=10)

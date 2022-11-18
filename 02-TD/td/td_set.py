@@ -67,7 +67,8 @@ class TDSet(DataSet):
                  f'Iter{model.counter}': result[0]}
 
     # Visualize data using Omma
-    Omma.visualize(data_dict)
+    cmap = [None, 'gray'][0]
+    Omma.visualize(data_dict, cmap=cmap)
 
 
   def snapshot(self, model):

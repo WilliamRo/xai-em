@@ -56,7 +56,7 @@ class Omma(Pictor):
   @staticmethod
   def visualize(data_dict: dict, title=True, color_bar=True, mini_map=False,
                 share_roi=False, vmin=None, vmax=None, init_depth=None,
-                vsigma=None, init_zoom=1.0):
+                vsigma=None, init_zoom=1.0, **kwargs):
     from pictor.plotters.microscope import Microscope
     om = Omma('Omma', figure_size=(8, 8))
 
@@ -79,6 +79,8 @@ class Omma(Pictor):
     ms.set('vsigma', vsigma)
     ms.zoom(init_zoom)
     ms.sv(vmin, vmax)
+
+    for k, v in kwargs.items(): ms.set(k, v)
 
     if init_depth is not None: om.sd(init_depth)
     om.show()

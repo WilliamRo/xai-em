@@ -27,7 +27,7 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 0. date set setup
   # ---------------------------------------------------------------------------
-  th.data_config = ['even>odd', 'even>even'][1]
+  th.data_config = ['even2odd', 'even2even'][1]
   th.random_switch = False
   th.train_volume_size = 64
 

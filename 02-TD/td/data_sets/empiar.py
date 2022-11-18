@@ -99,11 +99,13 @@ class EMPIARSet(TDSet):
 
   # region: Report and visualization
 
-  def visualize(self):
+  def visualize(self, **kwargs):
     from xem.ui.omma import Omma
 
+    cmap = [None, 'gray'][0]
     Omma.visualize({k: v for k, v in self.data_dict.items()},
-                   title=True, vsigma=1, mini_map=True, share_roi=True)
+                   title=True, mini_map=True, share_roi=True,
+                   cmap=cmap, **kwargs)
 
   # endregion: Report and visualization
 

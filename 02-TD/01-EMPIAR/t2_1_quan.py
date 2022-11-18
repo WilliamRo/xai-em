@@ -28,7 +28,7 @@ def predict(self, data):
     console.print_progress(i, total=th.sample_num)
     pred += Predictor.predict(self, data)
 
-  return (pred - np.mean(pred)) / np.std(pred) * th.dropout
+  return pred / th.sample_num
 
 
 def model():
@@ -107,8 +107,8 @@ def main(_):
 
   th.train = 0
   th.overwrite = 1
-  th.force_mask = True
-  th.sample_num = 100
+  th.force_mask = False
+  th.sample_num = 10
 
   gif_mode = 0
   if gif_mode:

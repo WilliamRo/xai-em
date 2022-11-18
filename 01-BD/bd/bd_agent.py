@@ -23,9 +23,9 @@ class BDAgent(DataAgent):
     bd_set = cls.load_as_tframe_data(th.data_dir)
 
     # Parse data_config
-    assert '>' in th.data_config
+    assert '2' in th.data_config
     for key, config in zip(
-        (BDSet.FEATURES, BDSet.TARGETS), th.data_config.split('>')):
+        (BDSet.FEATURES, BDSet.TARGETS), th.data_config.split('2')):
       volume_list = [bd_set.data_dict[k] for k in config.split(',')]
 
       # TODO: currently len(volume_list) is restricted to 1
@@ -71,7 +71,7 @@ if __name__ == '__main__':
   # ++ Blue box for data
   from bd_core import th
 
-  th.data_config = 'even>odd'
+  th.data_config = 'even2odd'
   ds = BDAgent.load()
   ds.data_dict['even+odd'] = ds['even'] + ds['odd']
   ds.report()
