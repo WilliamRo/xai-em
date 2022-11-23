@@ -11,6 +11,9 @@ class XEMConfig(SmartTrainerHub):
     False, 'Whether to randomly switch feature and target during training',
     is_key=None)
 
+  mask_size = Flag.integer(1, 'Quan-mask size', is_key=None)
+  visualize_mask = Flag.boolean(False, 'Option to visualize mask')
+
 
   @property
   def link_indices(self):

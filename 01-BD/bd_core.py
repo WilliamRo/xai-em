@@ -70,7 +70,7 @@ th.export_tensors_upon_validation = True
 
 
 def activate():
-  # Load data
+  # Load dat
   data_set = du.load_data()
 
   # Build model

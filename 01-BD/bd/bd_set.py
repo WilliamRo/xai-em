@@ -144,7 +144,7 @@ class BDSet(DataSet):
 
     # Visualize data using Omma
     Omma.visualize(data_dict, init_depth=th.snapshot_d_indices_list[0],
-                   vsigma=3)
+                   vsigma=3, share_roi=True)
 
   def snapshot(self, model):
     from bd_core import th
