@@ -8,7 +8,7 @@ import os
 
 
 # Read images
-folder_path = r'E:\xem\01-BD\01_unet\checkpoints\1114_unet(8-3-3-2-relu-mp-1,2)even-even'
+folder_path = r'E:\xem\01-BD\01_unet\checkpoints\1111_unet(8-3-3-2-relu-mp)'
 
 get_iter = lambda fp: int(fp.split('-')[1][4:])
 

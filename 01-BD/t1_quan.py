@@ -150,7 +150,7 @@ def main(_):
   th.optimizer = 'adam'
   th.learning_rate = 0.0003
 
-  th.train = 1
+  th.train = 0
   th.overwrite = 1
   th.force_mask = 1
   th.sample_num = 10

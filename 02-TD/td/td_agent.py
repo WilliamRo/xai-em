@@ -21,6 +21,8 @@ class TDAgent(DataAgent):
 
     if data_name == 'empiar':
       from td.data_sets.empiar import EMPIARSet as DataSetClass
+    elif data_name == 'tomo':
+      from td.data_sets.tomo import Tomo2DSet as DataSetClass
     else: raise KeyError(f'!! Unknown data name {data_name}')
 
     return DataSetClass.load_as_tframe_data(data_dir)

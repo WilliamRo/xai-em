@@ -61,6 +61,10 @@ class BDAgent(DataAgent):
       if not os.path.exists(file_path): raise FileExistsError(
         f'!! `{file_path}` does not exist.')
       x = np.load(file_path)
+
+      # Normalize data
+      x = (x - np.mean(x)) / np.std(x)
+
       volume_dict[key] = np.expand_dims(x, -1)  # shape => (D, H, W, 1)
 
     return volume_dict

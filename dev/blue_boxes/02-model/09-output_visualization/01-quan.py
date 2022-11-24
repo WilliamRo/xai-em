@@ -14,7 +14,7 @@ module.main(None)
 th.train = 0
 th.overwrite = 1
 th.force_mask = 1
-th.mask_size = 16
+th.mask_size = 4
 
 model: Predictor = th.model()
 
