@@ -17,18 +17,62 @@ id = 2
 def predict(self, data):
   th = core.th
 
-  from tframe import Predictor, DataSet
+  from tframe import Predictor, DataSet, context
   import numpy as np
   assert isinstance(self, Predictor) and isinstance(data, DataSet)
   assert th.force_mask
 
+  drop_mask = context.get_collection_by_key('quan')['drop_mask']
+
   console.show_status(f'Averaging over {th.sample_num} samples ...')
-  pred = 0
+  preds, masks = [], []
   for i in range(th.sample_num):
     console.print_progress(i, total=th.sample_num)
-    pred += Predictor.predict(self, data)
+    pred, mask = Predictor.evaluate(self, [self.output_tensor, drop_mask], data)
 
-  return pred / th.sample_num
+    preds.append(pred)
+    masks.append(mask)
+
+  # Generate prediction
+  pred = np.sum(preds, axis=0)
+
+  mask = np.sum(masks, axis=0)
+  mask[mask == 0] = 1e-6
+
+  # Snapshot and validation
+  if th.train: return pred / th.sample_num
+
+  # Use omma to visualize results
+  from xem.ui.omma import Omma
+  om = Omma('Omma', figure_size=(8, 8))
+
+  # Prepare data_dict to visualize
+  data_dict = {'input': data.features[0]}
+  if th.visualize_mask:
+    for i, m in enumerate(masks):
+      data_dict[f'mask[{i+1}]'] = m[0]
+      data_dict[f'pred[{i+1}]'] = preds[i][0]
+    # data_dict['sum(masks)'] = mask[0]
+
+  # Put predictions into dataset
+  MAX_PREDS = 10
+  update_dict = {}
+  for i, p in enumerate(preds):
+    if i + 1 in (1, 10, 50, 100, 200, 1000):
+      pred = np.sum(preds[:i+1], axis=0)
+      mask = np.sum(masks[:i+1], axis=0)
+      mask[mask == 0] = 1e-6
+      update_dict[f'pred/mask, {i+1} samples'] = (pred / mask)[0]
+
+    if i >= MAX_PREDS: continue
+    data_dict[f'pred[{i+1}]'] = p[0]
+
+  data_dict.update(update_dict)
+
+  cmap = [None, 'gray'][0]
+  om.visualize(data_dict, cmap=cmap, share_roi=True)
+  # End of evaluation
+  assert False
 
 
 def model():
@@ -39,7 +83,7 @@ def model():
 
   # Add input mask
   input_dropout: InputDropout = model.add(
-    InputDropout(th.dropout, force_mask=th.force_mask))
+    InputDropout(th.dropout, force_mask=th.force_mask, mask_size=th.mask_size))
 
   # Add U-Net backbone
   m.mu.UNet(2, arc_string=th.archi_string,
@@ -52,7 +96,9 @@ def model():
   quantity = input_dropout.get_loss(th.loss_string)
   model.build(loss=quantity, metric=quantity)
 
-  if th.force_mask: model.predict = lambda data: predict(model, data)
+  if th.force_mask:
+    model.predict = lambda data: predict(model, data)
+    model.output_tensor = model.output_tensor * input_dropout.drop_mask
 
   return model
 
@@ -106,15 +152,19 @@ def main(_):
   th.optimizer = 'adam'
   th.learning_rate = 0.0003
 
-  th.train = 1
+  th.train = 0
   th.overwrite = 1
   th.force_mask = 1
-  th.sample_num = 1
-
+  th.sample_num = 10
+  # ---------------------------------------------------------------------------
+  # 3.5. visualization
+  # ---------------------------------------------------------------------------
   gif_mode = 0
   if gif_mode:
     th.epoch = 25
     th.probe_cycle = th.updates_per_round // 2
+
+  th.visualize_mask = True
   # ---------------------------------------------------------------------------
   # 4. other stuff and activate
   # ---------------------------------------------------------------------------
