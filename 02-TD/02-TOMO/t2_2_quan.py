@@ -44,15 +44,9 @@ def predict(self, data):
 
   # Use omma to visualize results
   from xem.ui.omma import Omma
-  om = Omma('Omma', figure_size=(8, 8))
 
   # Prepare data_dict to visualize
   data_dict = {'input': data.features[0]}
-  if th.visualize_mask:
-    for i, m in enumerate(masks):
-      data_dict[f'mask[{i+1}]'] = m[0]
-      data_dict[f'pred[{i+1}]'] = preds[i][0]
-    # data_dict['sum(masks)'] = mask[0]
 
   # Put predictions into dataset
   MAX_PREDS = 10
@@ -66,11 +60,14 @@ def predict(self, data):
 
     if i >= MAX_PREDS: continue
     data_dict[f'pred[{i+1}]'] = p[0]
+    if th.visualize_mask: data_dict[f'mask[{i+1}]'] = masks[i][0]
 
+  if th.visualize_mask: data_dict['sum(masks)'] = mask[0]
   data_dict.update(update_dict)
 
   cmap = [None, 'gray'][0]
-  om.visualize(data_dict, cmap=cmap, share_roi=True)
+  Omma.visualize(data_dict, cmap=cmap, share_roi=True, init_zoom=0.5,
+                 mini_map=True)
   # End of evaluation
   assert False
 
@@ -83,7 +80,8 @@ def model():
 
   # Add input mask
   input_dropout: InputDropout = model.add(
-    InputDropout(th.dropout, force_mask=th.force_mask, mask_size=th.mask_size))
+    InputDropout(th.dropout, force_mask=th.force_mask, mask_size=th.mask_size,
+                 erosion=th.erosion))
 
   # Add U-Net backbone
   m.mu.UNet(2, arc_string=th.archi_string,
@@ -142,9 +140,9 @@ def main(_):
   # ---------------------------------------------------------------------------
   # 3. trainer setup
   # ---------------------------------------------------------------------------
-  th.epoch = 100
+  th.epoch = 1000
   th.early_stop = True
-  th.patience = 5
+  th.patience = 20
   th.probe_cycle = th.updates_per_round
 
   th.batch_size = 32
@@ -152,10 +150,12 @@ def main(_):
   th.optimizer = 'adam'
   th.learning_rate = 0.0003
 
-  th.train = 0
+  th.train = 1
   th.overwrite = 1
   th.force_mask = 1
-  th.sample_num = 10
+  th.sample_num = 100
+
+  th.erosion = 2
   # ---------------------------------------------------------------------------
   # 3.5. visualization
   # ---------------------------------------------------------------------------
@@ -164,7 +164,7 @@ def main(_):
     th.epoch = 25
     th.probe_cycle = th.updates_per_round // 2
 
-  th.visualize_mask = True
+  th.visualize_mask = 0
   # ---------------------------------------------------------------------------
   # 4. other stuff and activate
   # ---------------------------------------------------------------------------
@@ -172,7 +172,7 @@ def main(_):
     model_name, th.archi_string + '-' + th.link_indices_str)
   th.mark += th.data_config.split(' ')[1]
   th.mark += f'-ws{th.win_size}'
-  th.mark += f'dp{th.dropout}sz{th.mask_size}'
+  th.mark += f'dp{th.dropout}sz{th.mask_size}er{th.erosion}'
   th.gather_summ_name = th.prefix + summ_name + '.sum'
   core.activate()
 

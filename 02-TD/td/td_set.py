@@ -68,7 +68,7 @@ class TDSet(DataSet):
 
     # Visualize data using Omma
     cmap = [None, 'gray'][0]
-    Omma.visualize(data_dict, cmap=cmap)
+    Omma.visualize(data_dict, cmap=cmap, share_roi=True)
 
 
   def snapshot(self, model):

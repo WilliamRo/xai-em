@@ -14,6 +14,8 @@ class XEMConfig(SmartTrainerHub):
   mask_size = Flag.integer(1, 'Quan-mask size', is_key=None)
   visualize_mask = Flag.boolean(False, 'Option to visualize mask')
 
+  erosion = Flag.integer(0, 'erosion in quan', is_key=None)
+
 
   @property
   def link_indices(self):
