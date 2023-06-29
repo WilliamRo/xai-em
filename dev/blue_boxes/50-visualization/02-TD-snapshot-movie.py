@@ -9,7 +9,7 @@ import numpy as np
 
 
 # Read images
-folder_path = r'E:\xem\02-TD\01-EMPIAR\01_unet\checkpoints\1115_unet(8-3-3-2-relu-mp-a)empiar even2odd-ws64'
+folder_path = r'E:\xem\02-TD\02-TOMO\01_unet\checkpoints\1129_unet(16-3-3-2-relu-mp-a)even2odd-ws128'
 
 get_iter = lambda fp: int(fp.split('-')[0][4:])
 
